@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/mikestefanello/pagoda/ent/passwordtoken"
+	"github.com/mikestefanello/pagoda/ent/post"
 	"github.com/mikestefanello/pagoda/ent/schema"
 	"github.com/mikestefanello/pagoda/ent/user"
 )
@@ -24,6 +25,20 @@ func init() {
 	passwordtokenDescCreatedAt := passwordtokenFields[1].Descriptor()
 	// passwordtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
 	passwordtoken.DefaultCreatedAt = passwordtokenDescCreatedAt.Default.(func() time.Time)
+	postFields := schema.Post{}.Fields()
+	_ = postFields
+	// postDescTitle is the schema descriptor for title field.
+	postDescTitle := postFields[0].Descriptor()
+	// post.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	post.TitleValidator = postDescTitle.Validators[0].(func(string) error)
+	// postDescBody is the schema descriptor for body field.
+	postDescBody := postFields[1].Descriptor()
+	// post.BodyValidator is a validator for the "body" field. It is called by the builders before save.
+	post.BodyValidator = postDescBody.Validators[0].(func(string) error)
+	// postDescAuthor is the schema descriptor for author field.
+	postDescAuthor := postFields[2].Descriptor()
+	// post.AuthorValidator is a validator for the "author" field. It is called by the builders before save.
+	post.AuthorValidator = postDescAuthor.Validators[0].(func(string) error)
 	userHooks := schema.User{}.Hooks()
 	user.Hooks[0] = userHooks[0]
 	userFields := schema.User{}.Fields()

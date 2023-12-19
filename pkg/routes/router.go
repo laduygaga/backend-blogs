@@ -31,6 +31,8 @@ const (
 	routeNameAbout                = "about"
 	routeNameHome                 = "home"
 	routeNameSearch               = "search"
+	routeNamePost                 = "post"
+	routeNamePostSubmit           = "post.submit"
 )
 
 // BuildRouter builds the router
@@ -80,6 +82,7 @@ func BuildRouter(c *services.Container) {
 	// Example routes
 	navRoutes(c, g, ctr)
 	userRoutes(c, g, ctr)
+	postRoutes(c, g, ctr)
 }
 
 func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
@@ -124,4 +127,12 @@ func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 	reset := resetPassword{Controller: ctr}
 	resetGroup.GET("/token/:user/:password_token/:token", reset.Get).Name = routeNameResetPassword
 	resetGroup.POST("/token/:user/:password_token/:token", reset.Post).Name = routeNameResetPasswordSubmit
+}
+
+func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
+
+	Auth := g.Group("/post", middleware.RequireAuthentication())
+	post := Post{Controller: ctr}
+	Auth.GET("/create", post.Get).Name = routeNamePost
+	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
 }

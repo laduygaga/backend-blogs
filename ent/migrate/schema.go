@@ -29,6 +29,19 @@ var (
 			},
 		},
 	}
+	// PostsColumns holds the columns for the "posts" table.
+	PostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "title", Type: field.TypeString},
+		{Name: "body", Type: field.TypeString},
+		{Name: "author", Type: field.TypeString},
+	}
+	// PostsTable holds the schema information for the "posts" table.
+	PostsTable = &schema.Table{
+		Name:       "posts",
+		Columns:    PostsColumns,
+		PrimaryKey: []*schema.Column{PostsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -47,6 +60,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		PasswordTokensTable,
+		PostsTable,
 		UsersTable,
 	}
 )

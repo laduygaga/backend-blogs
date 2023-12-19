@@ -9,5 +9,8 @@ import (
 // PasswordToken is the predicate function for passwordtoken builders.
 type PasswordToken func(*sql.Selector)
 
+// Post is the predicate function for post builders.
+type Post func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

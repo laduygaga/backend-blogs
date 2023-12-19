@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// PasswordToken is the client for interacting with the PasswordToken builders.
 	PasswordToken *PasswordTokenClient
+	// Post is the client for interacting with the Post builders.
+	Post *PostClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -148,6 +150,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.PasswordToken = NewPasswordTokenClient(tx.config)
+	tx.Post = NewPostClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
