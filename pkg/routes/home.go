@@ -15,6 +15,7 @@ type (
 	}
 
 	_post_ struct {
+		ID	  int
 		Title string
 		Body  string
 	}
@@ -36,7 +37,10 @@ func (c *home) fetchPosts_(ctx echo.Context, pager *controller.Pager) []_post_ {
 
 	total, p := getPosts(c.Controller, ctx, pager)
 	pager.SetItems(total)
-	posts := make([]_post_, total)
+	if pager.Page < 1 {
+		pager.Page = 1
+	}
+	posts := make([]_post_, len(p))
 	for k, v := range p {
 		if len(v.Title) > 30 {
 			v.Title = v.Title[:30] + "..."
@@ -45,9 +49,10 @@ func (c *home) fetchPosts_(ctx echo.Context, pager *controller.Pager) []_post_ {
 			v.Body = v.Body[:80] + "..."
 		}
 		posts[k] = _post_{
+			ID:    v.ID,
 			Title: fmt.Sprintf("%s", v.Title),
 			Body:  fmt.Sprintf("%s", v.Body),
 		}
 	}
-	return posts[:pager.ItemsPerPage]
+	return posts
 }

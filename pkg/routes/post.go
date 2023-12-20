@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/mikestefanello/pagoda/ent"
@@ -61,6 +62,19 @@ func (c *post ) Post(ctx echo.Context) error {
 	return c.Redirect(ctx, routeNameHome)
 }
 
+func (c *post ) Delete(ctx echo.Context) error {
+
+	id, _ := strconv.Atoi(ctx.Param("id"))
+	if id == 0 {
+		return c.Fail(nil, "unable to delete post")
+	}
+	if err := c.Container.ORM.Post.DeleteOneID(id).Exec(ctx.Request().Context()); err != nil {
+		return c.Fail(err, "unable to delete post")
+	}
+
+	return c.Redirect(ctx, routeNameHome)
+}
+
 func getPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager) (int, []*ent.Post) {
 	total, err := c.Container.ORM.Post.
 		Query().
@@ -80,3 +94,4 @@ func getPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager
 
 	return total, posts
 }
+

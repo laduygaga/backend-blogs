@@ -33,6 +33,7 @@ const (
 	routeNameSearch               = "search"
 	routeNamePost                 = "post"
 	routeNamePostSubmit           = "post.submit"
+	routeNamePostDelete           = "post.delete"
 )
 
 // BuildRouter builds the router
@@ -135,4 +136,5 @@ func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 	post := post{Controller: ctr}
 	Auth.GET("/create", post.Get).Name = routeNamePost
 	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
+	Auth.GET("/delete/:id", post.Delete).Name = routeNamePostDelete
 }
