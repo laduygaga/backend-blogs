@@ -1,6 +1,9 @@
 package routes
 
 import (
+	"io"
+	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -8,6 +11,8 @@ import (
 	post_ "github.com/mikestefanello/pagoda/ent/post"
 	"github.com/mikestefanello/pagoda/pkg/context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
+
+	// "github.com/mikestefanello/pagoda/pkg/msg"
 	"github.com/mikestefanello/pagoda/templates"
 
 	"github.com/labstack/echo/v4"
@@ -26,7 +31,7 @@ type (
 
 func (c *post ) Get(ctx echo.Context) error {
 	page := controller.NewPage(ctx)
-	page.Layout = templates.LayoutAuth
+	page.Layout = templates.LayoutPost
 	page.Name = templates.PagePost
 	page.Title = "Post"
 	page.Form = postForm{}
@@ -72,6 +77,7 @@ func (c *post ) Delete(ctx echo.Context) error {
 		return c.Fail(err, "unable to delete post")
 	}
 
+	// msg.Info(ctx, fmt.Sprintf("Post %d deleted", id))
 	return c.Redirect(ctx, routeNameHome)
 }
 
@@ -95,3 +101,36 @@ func getPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager
 	return total, posts
 }
 
+// upload file to static/uploads
+func (c *post ) Upload(ctx echo.Context) error {
+	file, err := ctx.FormFile("upload")
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"Status": err.Error()})
+	}
+
+	// Open the file from the temporary location
+	src, err := file.Open()
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"Status": err.Error()})
+	}
+	defer src.Close()
+
+	// Create a new file in the destination
+	dst, err := os.Create("./static/uploads/" + file.Filename)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"Status": err.Error()})
+	}
+	defer dst.Close()
+
+	// Copy the file content to the destination
+	if _, err = io.Copy(dst, src); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"Status": err.Error()})
+	}
+
+	// Return success response
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"uploaded":  1,
+		"fileName":  file.Filename,
+		"url":       "/static/uploads/" + file.Filename,
+	})
+}

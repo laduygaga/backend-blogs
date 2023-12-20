@@ -10,7 +10,12 @@
         <div class="field">
             <label for="body" class="label">Body</label>
             <div class="control">
-                <input type="text" id="body" name="body" class="input {{.Form.Submission.GetFieldStatusClass "Body"}}" value="{{.Form.Body}}">
+        <div class="col-span-5">
+				<input id="body" name="body" class="input {{.Form.Submission.GetFieldStatusClass "Body"}}" value="{{.Form.Body}}">
+        </div><br/>
+
+
+				
                 {{template "field-errors" (.Form.Submission.GetFieldErrors "Body")}}
             </div>
         </div>
@@ -24,4 +29,33 @@
         </div>
         {{template "csrf" .}}
     </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            ClassicEditor
+                .create(document.querySelector('#body'), {
+                    ckfinder: {
+                        uploadUrl: '/post/upload',
+                    },
+                })
+                .then(editor => {
+                    // Now you can access the editor's data, including the body content
+                    editor.model.document.on('change', () => {
+                        const bodyValue = editor.getData();
+                        console.log(bodyValue);
+                        // If you want to update a hidden input field, you can do something like this:
+                        document.querySelector('#body').value = bodyValue;
+                    });
+
+                    // Enable form submission after CKEditor is initialized
+                    document.querySelector('#postForm').addEventListener('submit', function () {
+                        // Update the hidden input value before form submission
+                        document.querySelector('#body').value = editor.getData();
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    </script>
+
 {{end}}

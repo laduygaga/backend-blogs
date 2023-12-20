@@ -34,6 +34,7 @@ const (
 	routeNamePost                 = "post"
 	routeNamePostSubmit           = "post.submit"
 	routeNamePostDelete           = "post.delete"
+	routeNamePostUpload           = "post.upload"
 )
 
 // BuildRouter builds the router
@@ -69,7 +70,10 @@ func BuildRouter(c *services.Container) {
 		middleware.LoadAuthenticatedUser(c.Auth),
 		middleware.ServeCachedPage(c.Cache),
 		echomw.CSRFWithConfig(echomw.CSRFConfig{
-			TokenLookup: "form:csrf",
+			// TokenLookup: "form:csrf",
+			Skipper: func(ctx echo.Context) bool {
+				return true
+			},
 		}),
 	)
 
@@ -88,7 +92,9 @@ func BuildRouter(c *services.Container) {
 
 func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
 	home := home{Controller: ctr}
+	g.Static("/static", config.StaticDir)
 	g.GET("/", home.Get).Name = routeNameHome
+	g.DELETE("/", home.Get).Name = routeNameHome
 
 	search := search{Controller: ctr}
 	g.GET("/search", search.Get).Name = routeNameSearch
@@ -136,5 +142,7 @@ func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 	post := post{Controller: ctr}
 	Auth.GET("/create", post.Get).Name = routeNamePost
 	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
-	Auth.GET("/delete/:id", post.Delete).Name = routeNamePostDelete
+	Auth.DELETE("/delete/:id", post.Delete).Name = routeNamePostDelete
+	Auth.POST("/upload", post.Upload).Name = routeNamePostUpload
+
 }
