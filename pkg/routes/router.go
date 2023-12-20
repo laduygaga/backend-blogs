@@ -132,7 +132,7 @@ func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
 
 	Auth := g.Group("/post", middleware.RequireAuthentication())
-	post := Post{Controller: ctr}
+	post := post{Controller: ctr}
 	Auth.GET("/create", post.Get).Name = routeNamePost
 	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
 }

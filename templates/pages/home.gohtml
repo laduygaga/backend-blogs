@@ -5,9 +5,9 @@
 
     {{template "posts" .}}
 
-    {{- if not (eq .HTMX.Request.Target "posts")}}
-        {{template "file-msg" .}}
-    {{- end}}
+    <!-- {{- if not (eq .HTMX.Request.Target "posts")}} -->
+    <!--     {{template "file-msg" .}} -->
+    <!-- {{- end}} -->
 {{end}}
 
 {{define "top-content"}}
@@ -24,9 +24,9 @@
 
     <section class="section">
         <h1 class="title">Recent posts</h1>
-        <h2 class="subtitle">
-            Below is an example of both paging and AJAX fetching using HTMX
-        </h2>
+        <!-- <h2 class="subtitle"> -->
+        <!--     Below is list of recent post -->
+        <!-- </h2> -->
     </section>
 {{end}}
 

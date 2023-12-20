@@ -14,7 +14,7 @@ type (
 		controller.Controller
 	}
 
-	post struct {
+	_post_ struct {
 		Title string
 		Body  string
 	}
@@ -27,21 +27,27 @@ func (c *home) Get(ctx echo.Context) error {
 	page.Metatags.Description = "Welcome to the homepage."
 	page.Metatags.Keywords = []string{"Go", "MVC", "Web", "Software"}
 	page.Pager = controller.NewPager(ctx, 4)
-	page.Data = c.fetchPosts(&page.Pager)
+	page.Data = c.fetchPosts_(ctx, &page.Pager)
 
 	return c.RenderPage(ctx, page)
 }
 
-// fetchPosts is an mock example of fetching posts to illustrate how paging works
-func (c *home) fetchPosts(pager *controller.Pager) []post {
-	pager.SetItems(20)
-	posts := make([]post, 20)
+func (c *home) fetchPosts_(ctx echo.Context, pager *controller.Pager) []_post_ {
 
-	for k := range posts {
-		posts[k] = post{
-			Title: fmt.Sprintf("Post example #%d", k+1),
-			Body:  fmt.Sprintf("Lorem ipsum example #%d ddolor sit amet, consectetur adipiscing elit. Nam elementum vulputate tristique.", k+1),
+	total, p := getPosts(c.Controller, ctx, pager)
+	pager.SetItems(total)
+	posts := make([]_post_, total)
+	for k, v := range p {
+		if len(v.Title) > 30 {
+			v.Title = v.Title[:30] + "..."
+		}
+		if len(v.Body) > 80 {
+			v.Body = v.Body[:80] + "..."
+		}
+		posts[k] = _post_{
+			Title: fmt.Sprintf("%s", v.Title),
+			Body:  fmt.Sprintf("%s", v.Body),
 		}
 	}
-	return posts[pager.GetOffset() : pager.GetOffset()+pager.ItemsPerPage]
+	return posts[:pager.ItemsPerPage]
 }
