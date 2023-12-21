@@ -10,7 +10,7 @@
         <div class="field">
             <label for="body" class="label">Body</label>
             <div class="control">
-				<input id="editor" name="body" class="input {{.Form.Submission.GetFieldStatusClass "Body"}}" value="{{.Form.Body}}">
+				<textarea id="editor" name="body" class="textarea {{.Form.Submission.GetFieldStatusClass "Body"}}">{{.Form.Body}}</textarea>
                 {{template "field-errors" (.Form.Submission.GetFieldErrors "Body")}}
             </div>
         </div>
@@ -34,6 +34,9 @@
 					},
 				})
 				.then(editor => {
+					// log all toolbar items
+					// console.log(Array.from(editor.ui.componentFactory.names()));
+
 					editor.model.document.on('change', () => {
 						const editorValue = editor.getData();
 						document.querySelector('#editor').value = editorValue;

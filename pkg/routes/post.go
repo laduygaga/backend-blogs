@@ -31,7 +31,7 @@ type (
 
 func (c *post ) Get(ctx echo.Context) error {
 	page := controller.NewPage(ctx)
-	page.Layout = templates.LayoutPost
+	page.Layout = templates.LayoutMain
 	page.Name = templates.PagePost
 	page.Title = "Post"
 	page.Form = postForm{}
