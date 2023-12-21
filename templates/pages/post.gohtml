@@ -1,33 +1,4 @@
 {{define "content"}}
-	<script>
-		// have to load this script before to load ckeditor
-		function initializeEditor() {
-			ClassicEditor
-				.create(document.querySelector('#editor'), {
-					ckfinder: {
-						uploadUrl: '/post/upload',
-					},
-				})
-				.then(editor => {
-					editor.model.document.on('change', () => {
-						const editorValue = editor.getData();
-						document.querySelector('#editor').value = editorValue;
-					});
-				})
-				.catch(error => {
-					console.error('CKEditor initialization failed:', error);
-				});
-		}
-
-		// Check if the element with ID 'editor' exists before initializing the editor
-		if (document.getElementById('editor')) {
-			initializeEditor();
-		} else {
-			// If the element doesn't exist, wait for the DOMContentLoaded event
-			document.addEventListener('DOMContentLoaded', initializeEditor);
-		}
-	</script>
-
     <form method="post" hx-boost="true" action="{{call .ToURL "post.post"}}">
         <div class="field">
             <label for="title" class="label">Title</label>
@@ -54,5 +25,32 @@
         {{template "csrf" .}}
     </form>
 
+	<script>
+		function initializeEditor() {
+			ClassicEditor
+				.create(document.querySelector('#editor'), {
+					ckfinder: {
+						uploadUrl: '/post/upload',
+					},
+				})
+				.then(editor => {
+					editor.model.document.on('change', () => {
+						const editorValue = editor.getData();
+						document.querySelector('#editor').value = editorValue;
+					});
+				})
+				.catch(error => {
+					console.error('CKEditor initialization failed:', error);
+				});
+		}
+
+		// Check if the element with ID 'editor' exists before initializing the editor
+		if (document.getElementById('editor')) {
+			initializeEditor();
+		} else {
+			// If the element doesn't exist, wait for the DOMContentLoaded event
+			document.addEventListener('DOMContentLoaded', initializeEditor);
+		}
+	</script>
 
 {{end}}
