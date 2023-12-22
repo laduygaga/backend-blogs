@@ -56,6 +56,20 @@ func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
 	return uu
 }
 
+// SetPermission sets the "permission" field.
+func (uu *UserUpdate) SetPermission(s string) *UserUpdate {
+	uu.mutation.SetPermission(s)
+	return uu
+}
+
+// SetNillablePermission sets the "permission" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePermission(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetPermission(*s)
+	}
+	return uu
+}
+
 // SetPassword sets the "password" field.
 func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
 	uu.mutation.SetPassword(s)
@@ -164,6 +178,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.Permission(); ok {
+		if err := user.PermissionValidator(v); err != nil {
+			return &ValidationError{Name: "permission", err: fmt.Errorf(`ent: validator failed for field "User.permission": %w`, err)}
+		}
+	}
 	if v, ok := uu.mutation.Password(); ok {
 		if err := user.PasswordValidator(v); err != nil {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
@@ -189,6 +208,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Permission(); ok {
+		_spec.SetField(user.FieldPermission, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
@@ -285,6 +307,20 @@ func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
 func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetEmail(*s)
+	}
+	return uuo
+}
+
+// SetPermission sets the "permission" field.
+func (uuo *UserUpdateOne) SetPermission(s string) *UserUpdateOne {
+	uuo.mutation.SetPermission(s)
+	return uuo
+}
+
+// SetNillablePermission sets the "permission" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePermission(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetPermission(*s)
 	}
 	return uuo
 }
@@ -410,6 +446,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.Permission(); ok {
+		if err := user.PermissionValidator(v); err != nil {
+			return &ValidationError{Name: "permission", err: fmt.Errorf(`ent: validator failed for field "User.permission": %w`, err)}
+		}
+	}
 	if v, ok := uuo.mutation.Password(); ok {
 		if err := user.PasswordValidator(v); err != nil {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
@@ -452,6 +493,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Permission(); ok {
+		_spec.SetField(user.FieldPermission, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)

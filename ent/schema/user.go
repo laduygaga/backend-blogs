@@ -26,6 +26,9 @@ func (User) Fields() []ent.Field {
 		field.String("email").
 			NotEmpty().
 			Unique(),
+		field.String("permission").
+			NotEmpty().
+			Default("R"),
 		field.String("password").
 			Sensitive().
 			NotEmpty(),

@@ -33,6 +33,20 @@ func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	return uc
 }
 
+// SetPermission sets the "permission" field.
+func (uc *UserCreate) SetPermission(s string) *UserCreate {
+	uc.mutation.SetPermission(s)
+	return uc
+}
+
+// SetNillablePermission sets the "permission" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePermission(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPermission(*s)
+	}
+	return uc
+}
+
 // SetPassword sets the "password" field.
 func (uc *UserCreate) SetPassword(s string) *UserCreate {
 	uc.mutation.SetPassword(s)
@@ -119,6 +133,10 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() error {
+	if _, ok := uc.mutation.Permission(); !ok {
+		v := user.DefaultPermission
+		uc.mutation.SetPermission(v)
+	}
 	if _, ok := uc.mutation.Verified(); !ok {
 		v := user.DefaultVerified
 		uc.mutation.SetVerified(v)
@@ -149,6 +167,14 @@ func (uc *UserCreate) check() error {
 	if v, ok := uc.mutation.Email(); ok {
 		if err := user.EmailValidator(v); err != nil {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.Permission(); !ok {
+		return &ValidationError{Name: "permission", err: errors.New(`ent: missing required field "User.permission"`)}
+	}
+	if v, ok := uc.mutation.Permission(); ok {
+		if err := user.PermissionValidator(v); err != nil {
+			return &ValidationError{Name: "permission", err: fmt.Errorf(`ent: validator failed for field "User.permission": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.Password(); !ok {
@@ -198,6 +224,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
+	}
+	if value, ok := uc.mutation.Permission(); ok {
+		_spec.SetField(user.FieldPermission, field.TypeString, value)
+		_node.Permission = value
 	}
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)

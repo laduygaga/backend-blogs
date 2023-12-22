@@ -920,6 +920,7 @@ type UserMutation struct {
 	id            *int
 	name          *string
 	email         *string
+	permission    *string
 	password      *string
 	verified      *bool
 	created_at    *time.Time
@@ -1100,6 +1101,42 @@ func (m *UserMutation) OldEmail(ctx context.Context) (v string, err error) {
 // ResetEmail resets all changes to the "email" field.
 func (m *UserMutation) ResetEmail() {
 	m.email = nil
+}
+
+// SetPermission sets the "permission" field.
+func (m *UserMutation) SetPermission(s string) {
+	m.permission = &s
+}
+
+// Permission returns the value of the "permission" field in the mutation.
+func (m *UserMutation) Permission() (r string, exists bool) {
+	v := m.permission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPermission returns the old "permission" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldPermission(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPermission is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPermission requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPermission: %w", err)
+	}
+	return oldValue.Permission, nil
+}
+
+// ResetPermission resets all changes to the "permission" field.
+func (m *UserMutation) ResetPermission() {
+	m.permission = nil
 }
 
 // SetPassword sets the "password" field.
@@ -1298,12 +1335,15 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
+	}
+	if m.permission != nil {
+		fields = append(fields, user.FieldPermission)
 	}
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
@@ -1326,6 +1366,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case user.FieldEmail:
 		return m.Email()
+	case user.FieldPermission:
+		return m.Permission()
 	case user.FieldPassword:
 		return m.Password()
 	case user.FieldVerified:
@@ -1345,6 +1387,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldName(ctx)
 	case user.FieldEmail:
 		return m.OldEmail(ctx)
+	case user.FieldPermission:
+		return m.OldPermission(ctx)
 	case user.FieldPassword:
 		return m.OldPassword(ctx)
 	case user.FieldVerified:
@@ -1373,6 +1417,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
+		return nil
+	case user.FieldPermission:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPermission(v)
 		return nil
 	case user.FieldPassword:
 		v, ok := value.(string)
@@ -1449,6 +1500,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldEmail:
 		m.ResetEmail()
+		return nil
+	case user.FieldPermission:
+		m.ResetPermission()
 		return nil
 	case user.FieldPassword:
 		m.ResetPassword()

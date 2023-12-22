@@ -65,6 +65,11 @@ func Email(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
 }
 
+// Permission applies equality check predicate on the "permission" field. It's identical to PermissionEQ.
+func Permission(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPermission, v))
+}
+
 // Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
 func Password(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPassword, v))
@@ -208,6 +213,71 @@ func EmailEqualFold(v string) predicate.User {
 // EmailContainsFold applies the ContainsFold predicate on the "email" field.
 func EmailContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldEmail, v))
+}
+
+// PermissionEQ applies the EQ predicate on the "permission" field.
+func PermissionEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPermission, v))
+}
+
+// PermissionNEQ applies the NEQ predicate on the "permission" field.
+func PermissionNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldPermission, v))
+}
+
+// PermissionIn applies the In predicate on the "permission" field.
+func PermissionIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldPermission, vs...))
+}
+
+// PermissionNotIn applies the NotIn predicate on the "permission" field.
+func PermissionNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldPermission, vs...))
+}
+
+// PermissionGT applies the GT predicate on the "permission" field.
+func PermissionGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldPermission, v))
+}
+
+// PermissionGTE applies the GTE predicate on the "permission" field.
+func PermissionGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldPermission, v))
+}
+
+// PermissionLT applies the LT predicate on the "permission" field.
+func PermissionLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldPermission, v))
+}
+
+// PermissionLTE applies the LTE predicate on the "permission" field.
+func PermissionLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldPermission, v))
+}
+
+// PermissionContains applies the Contains predicate on the "permission" field.
+func PermissionContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldPermission, v))
+}
+
+// PermissionHasPrefix applies the HasPrefix predicate on the "permission" field.
+func PermissionHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldPermission, v))
+}
+
+// PermissionHasSuffix applies the HasSuffix predicate on the "permission" field.
+func PermissionHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldPermission, v))
+}
+
+// PermissionEqualFold applies the EqualFold predicate on the "permission" field.
+func PermissionEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldPermission, v))
+}
+
+// PermissionContainsFold applies the ContainsFold predicate on the "permission" field.
+func PermissionContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldPermission, v))
 }
 
 // PasswordEQ applies the EQ predicate on the "password" field.

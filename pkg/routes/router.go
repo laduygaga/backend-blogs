@@ -19,6 +19,8 @@ const (
 	routeNameForgotPassword       = "forgot_password"
 	routeNameForgotPasswordSubmit = "forgot_password.submit"
 	routeNameLogin                = "login"
+	routeNameLoginWithGoogle      = "login_with_google"
+	routeNameLoginGoogleCallback  = "login_with_google_callback"
 	routeNameLoginSubmit          = "login.submit"
 	routeNameLogout               = "logout"
 	routeNameRegister             = "register"
@@ -55,6 +57,21 @@ func BuildRouter(c *services.Container) {
 	}
 
 	g.Use(
+		echomw.CORSWithConfig(echomw.CORSConfig{
+			AllowOrigins: []string{"*"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType,
+				echo.HeaderAccept,echo.HeaderAccessControlRequestMethod,
+				echo.HeaderAccessControlRequestHeaders, 
+				echo.HeaderAccessControlAllowOrigin, 
+				echo.HeaderAccessControlAllowMethods, 
+				echo.HeaderAccessControlAllowHeaders, 
+				echo.HeaderAccessControlAllowCredentials, 
+				echo.HeaderAccessControlExposeHeaders, 
+				echo.HeaderAccessControlMaxAge, 
+			},
+			AllowMethods: []string{echo.OPTIONS, echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+			AllowCredentials: true,
+		}),
 		echomw.RemoveTrailingSlashWithConfig(echomw.TrailingSlashConfig{
 			RedirectCode: http.StatusMovedPermanently,
 		}),
@@ -118,7 +135,9 @@ func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 
 	noAuth := g.Group("/user", middleware.RequireNoAuthentication())
 	login := login{Controller: ctr}
+	g.GET("/api/v1/google/callback", login.GetCallback).Name = routeNameLoginGoogleCallback
 	noAuth.GET("/login", login.Get).Name = routeNameLogin
+	noAuth.GET("/login_with_google", login.LoginWithGoogle).Name = routeNameLoginWithGoogle
 	noAuth.POST("/login", login.Post).Name = routeNameLoginSubmit
 
 	register := register{Controller: ctr}

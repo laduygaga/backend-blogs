@@ -19,6 +19,8 @@ const (
 	FieldName = "name"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldPermission holds the string denoting the permission field in the database.
+	FieldPermission = "permission"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
 	// FieldVerified holds the string denoting the verified field in the database.
@@ -43,6 +45,7 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldEmail,
+	FieldPermission,
 	FieldPassword,
 	FieldVerified,
 	FieldCreatedAt,
@@ -69,6 +72,10 @@ var (
 	NameValidator func(string) error
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
+	// DefaultPermission holds the default value on creation for the "permission" field.
+	DefaultPermission string
+	// PermissionValidator is a validator for the "permission" field. It is called by the builders before save.
+	PermissionValidator func(string) error
 	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	PasswordValidator func(string) error
 	// DefaultVerified holds the default value on creation for the "verified" field.
@@ -93,6 +100,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByEmail orders the results by the email field.
 func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByPermission orders the results by the permission field.
+func ByPermission(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPermission, opts...).ToFunc()
 }
 
 // ByPassword orders the results by the password field.

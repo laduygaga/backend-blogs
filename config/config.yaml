@@ -1,6 +1,6 @@
 http:
   hostname: ""
-  port: 8000
+  port: 9090
   readTimeout: "5s"
   writeTimeout: "10s"
   idleTimeout: "2m"
@@ -44,3 +44,8 @@ mail:
   user: "admin"
   password: "admin"
   fromAddress: "admin@localhost"
+
+google:
+  clientID: "391311089164-4nq9rbu6ji68ao54e1mv85m4aujjtg0b.apps.googleusercontent.com"
+  clientSecret: "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"
+  redirectURL: "https://bm.ota.net:9090/api/v1/google/callback"

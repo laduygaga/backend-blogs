@@ -2,14 +2,21 @@ package routes
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
+	"github.com/mikestefanello/pagoda/config"
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/ent/user"
 	"github.com/mikestefanello/pagoda/pkg/context"
+	cctx "context"
 	"github.com/mikestefanello/pagoda/pkg/controller"
 	"github.com/mikestefanello/pagoda/pkg/msg"
 	"github.com/mikestefanello/pagoda/templates"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	googleoauth2 "google.golang.org/api/oauth2/v2"
+	"google.golang.org/api/option"
 
 	"github.com/labstack/echo/v4"
 )
@@ -93,3 +100,101 @@ func (c *login) Post(ctx echo.Context) error {
 	msg.Success(ctx, fmt.Sprintf("Welcome back, <strong>%s</strong>. You are now logged in.", u.Name))
 	return c.Redirect(ctx, routeNameHome)
 }
+
+func (c *login) LoginWithGoogle(ctx echo.Context) error {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		panic(fmt.Sprintf("failed to load config: %v", err))
+	}
+	googleOAuthConfig := oauth2.Config{
+	ClientID:     cfg.Google.ClientID,
+	ClientSecret: cfg.Google.ClientSecret,
+	RedirectURL:  cfg.Google.RedirectURL,
+	Scopes:       []string{
+	 "https://www.googleapis.com/auth/userinfo.profile", 
+	 "https://www.googleapis.com/auth/userinfo.email",
+	},
+	Endpoint: google.Endpoint,
+}
+	authURL := googleOAuthConfig.AuthCodeURL("test", oauth2.AccessTypeOffline, oauth2.ApprovalForce)
+	http.Redirect(ctx.Response(), ctx.Request(), authURL, http.StatusFound)
+	return nil
+}
+
+func (c *login) GetCallback(ctx echo.Context) error {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		panic(fmt.Sprintf("failed to load config: %v", err))
+	}
+	googleOAuthConfig := oauth2.Config{
+	ClientID:     cfg.Google.ClientID,
+	ClientSecret: cfg.Google.ClientSecret,
+	RedirectURL:  cfg.Google.RedirectURL,
+	Scopes:       []string{
+	 "https://www.googleapis.com/auth/userinfo.profile", 
+	 "https://www.googleapis.com/auth/userinfo.email",
+	},
+	Endpoint: google.Endpoint,
+}
+	code := ctx.QueryParam("code")
+	tok, err := googleOAuthConfig.Exchange(ctx.Request().Context(), code)
+	if err != nil {
+		panic(fmt.Sprintf("failed to exchange token: %v", err))
+	}
+
+	httpClient := googleOAuthConfig.Client(ctx.Request().Context(), tok)
+
+	userInfo, err := getUserInfo(httpClient)
+	if err != nil {
+		return err
+	}
+
+	// get user by email
+	u, err := c.Container.ORM.User.
+		Query().
+		Where(user.Email(strings.ToLower(userInfo.Email))).
+		Only(ctx.Request().Context())
+	
+	switch err.(type) {
+	case *ent.NotFoundError:
+		// create user
+		password, _ := c.Container.Auth.HashPassword(fmt.Sprintf("%s%s", userInfo.Id, userInfo.Email))
+		u, err = c.Container.ORM.User.
+			Create().
+			SetName(userInfo.Name).
+			SetEmail(userInfo.Email).
+			SetPassword(password).
+			SetVerified(true).
+			Save(ctx.Request().Context())
+		if err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return c.Fail(err, "error querying user during login")
+	}
+
+	// Log the user in
+	err = c.Container.Auth.Login(ctx, u.ID)
+	if err != nil {
+		return c.Fail(err, "unable to log in user")
+	}
+
+	msg.Success(ctx, fmt.Sprintf("Welcome back, <strong>%s</strong>. You are now logged in.", u.Name))
+	return c.Redirect(ctx, routeNameHome)
+}
+
+func getUserInfo(httpClient *http.Client) (*googleoauth2.Userinfo, error) {
+	oauth2Service, err := googleoauth2.NewService(cctx.Background(), option.WithHTTPClient(httpClient))
+	if err != nil {
+		return nil, err
+	}
+
+	oauth2UserInfo, err := oauth2Service.Userinfo.V2.Me.Get().Do()
+	if err != nil {
+		return nil, err
+	}
+
+	return oauth2UserInfo, nil
+}
+

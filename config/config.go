@@ -58,6 +58,7 @@ type (
 		Cache    CacheConfig
 		Database DatabaseConfig
 		Mail     MailConfig
+		Google   GoogleConfig
 	}
 
 	// HTTPConfig stores HTTP configuration
@@ -117,6 +118,12 @@ type (
 		User        string
 		Password    string
 		FromAddress string
+	}
+
+	GoogleConfig struct {
+		ClientID		string
+		ClientSecret    string
+		RedirectURL     string
 	}
 )
 
