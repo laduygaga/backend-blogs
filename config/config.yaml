@@ -5,9 +5,9 @@ http:
   writeTimeout: "10s"
   idleTimeout: "2m"
   tls:
-    enabled: false
-    certificate: ""
-    key: ""
+    enabled: true
+    certificate: "localhost.crt"
+    key: "localhost.key"
 
 app:
   name: "OTA Blogs Admin"

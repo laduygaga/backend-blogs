@@ -45,6 +45,13 @@ func BuildRouter(c *services.Container) {
 	// Static files with proper cache control
 	// funcmap.File() should be used in templates to append a cache key to the URL in order to break cache
 	// after each server restart
+
+	c.Web.Use(echomw.CORSWithConfig(echomw.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"*"},
+		AllowMethods: []string{"*"},
+		AllowCredentials: true,
+	}))
 	c.Web.Group("", middleware.CacheControl(c.Config.Cache.Expiration.StaticFile)).
 		Static(config.StaticPrefix, config.StaticDir)
 
@@ -57,21 +64,6 @@ func BuildRouter(c *services.Container) {
 	}
 
 	g.Use(
-		echomw.CORSWithConfig(echomw.CORSConfig{
-			AllowOrigins: []string{"*"},
-			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType,
-				echo.HeaderAccept,echo.HeaderAccessControlRequestMethod,
-				echo.HeaderAccessControlRequestHeaders, 
-				echo.HeaderAccessControlAllowOrigin, 
-				echo.HeaderAccessControlAllowMethods, 
-				echo.HeaderAccessControlAllowHeaders, 
-				echo.HeaderAccessControlAllowCredentials, 
-				echo.HeaderAccessControlExposeHeaders, 
-				echo.HeaderAccessControlMaxAge, 
-			},
-			AllowMethods: []string{echo.OPTIONS, echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
-			AllowCredentials: true,
-		}),
 		echomw.RemoveTrailingSlashWithConfig(echomw.TrailingSlashConfig{
 			RedirectCode: http.StatusMovedPermanently,
 		}),
