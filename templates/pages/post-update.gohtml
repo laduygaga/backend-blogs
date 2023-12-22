@@ -1,0 +1,61 @@
+{{define "content"}}
+    <form method="put" hx-boost="true" action="{{call .ToURL "post.update" .Form.ID}}">
+        <div class="field">
+            <label for="title" class="label">Title</label>
+            <div class="control">
+                <input type="text" id="title" name="title" class="input {{.Form.Submission.GetFieldStatusClass "Title"}}" value="{{.Form.Title}}">
+                {{template "field-errors" (.Form.Submission.GetFieldErrors "Name")}}
+            </div>
+        </div>
+        <div class="field">
+            <label for="body" class="label">Body</label>
+            <div class="control">
+                <textarea id="editor" name="body" class="textarea {{.Form.Submission.GetFieldStatusClass "Body"}}">{{.Form.Body}}</textarea>
+                {{template "field-errors" (.Form.Submission.GetFieldErrors "Body")}}
+            </div>
+        </div>
+        <!-- Add hidden input fields for the post ID -->
+        <input type="hidden" name="id" value="{{.Form.ID}}">
+        <div class="field is-grouped">
+            <p class="control">
+                <button class="button is-primary">Update</button>
+            </p>
+            <p class="control">
+                <a href="{{call .ToURL "home"}}" class="button is-light">Cancel</a>
+            </p>
+        </div>
+        {{template "csrf" .}}
+    </form>
+
+	<script>
+		function initializeEditor() {
+			ClassicEditor
+				.create(document.querySelector('#editor'), {
+					ckfinder: {
+						uploadUrl: '/post/upload',
+					},
+				})
+				.then(editor => {
+					// log all toolbar items
+					// console.log(Array.from(editor.ui.componentFactory.names()));
+
+					editor.model.document.on('change', () => {
+						const editorValue = editor.getData();
+						document.querySelector('#editor').value = editorValue;
+					});
+				})
+				.catch(error => {
+					console.error('CKEditor initialization failed:', error);
+				});
+		}
+
+		// Check if the element with ID 'editor' exists before initializing the editor
+		if (document.getElementById('editor')) {
+			initializeEditor();
+		} else {
+			// If the element doesn't exist, wait for the DOMContentLoaded event
+			document.addEventListener('DOMContentLoaded', initializeEditor);
+		}
+	</script>
+
+{{end}}

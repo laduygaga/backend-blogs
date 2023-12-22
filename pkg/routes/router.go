@@ -33,6 +33,7 @@ const (
 	routeNameSearch               = "search"
 	routeNamePost                 = "post"
 	routeNamePostSubmit           = "post.submit"
+	routeNamePostUpdate           = "post.update"
 	routeNamePostDelete           = "post.delete"
 	routeNamePostUpload           = "post.upload"
 )
@@ -95,6 +96,7 @@ func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) 
 	g.Static("/static", config.StaticDir)
 	g.GET("/", home.Get).Name = routeNameHome
 	g.DELETE("/", home.Get).Name = routeNameHome
+	g.POST("/", home.Get).Name = routeNameHome
 
 	search := search{Controller: ctr}
 	g.GET("/search", search.Get).Name = routeNameSearch
@@ -142,6 +144,8 @@ func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 	post := post{Controller: ctr}
 	Auth.GET("/create", post.Get).Name = routeNamePost
 	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
+	Auth.GET("/edit/:id", post.GetUpdate).Name = routeNamePostSubmit
+	Auth.PUT("/edit/:id", post.Update).Name = routeNamePostUpdate
 	Auth.DELETE("/delete/:id", post.Delete).Name = routeNamePostDelete
 	Auth.POST("/upload", post.Upload).Name = routeNamePostUpload
 

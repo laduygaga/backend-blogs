@@ -17,7 +17,6 @@ type (
 const (
 	LayoutMain Layout = "main"
 	LayoutAuth Layout = "auth"
-	LayoutPost Layout = "post"
 )
 
 const (
@@ -27,6 +26,7 @@ const (
 	PageForgotPassword Page = "forgot-password"
 	PageHome           Page = "home"
 	PagePost           Page = "post"
+	PagePostUpdate     Page = "post-update"
 	PageLogin          Page = "login"
 	PageRegister       Page = "register"
 	PageResetPassword  Page = "reset-password"

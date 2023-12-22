@@ -23,6 +23,7 @@ type (
 		controller.Controller
 	}
 	postForm struct {
+		ID    int    `form:"id"`
 		Title string `form:"title" validate:"required"`
 		Body  string `form:"body" validate:"required"`
 		Submission controller.FormSubmission
@@ -35,6 +36,32 @@ func (c *post ) Get(ctx echo.Context) error {
 	page.Name = templates.PagePost
 	page.Title = "Post"
 	page.Form = postForm{}
+	if form := ctx.Get(context.FormKey); form != nil {
+		page.Form = form.(*postForm)
+	}
+
+	return c.RenderPage(ctx, page)
+}
+
+func (c *post ) GetUpdate(ctx echo.Context) error {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		return c.Fail(err, "unable to update post")
+	}
+	post, err := c.Container.ORM.Post.Get(ctx.Request().Context(), id)
+	if err != nil {
+		return c.Fail(err, "unable to update post")
+	}
+
+	page := controller.NewPage(ctx)
+	page.Layout = templates.LayoutMain
+	page.Name = templates.PagePostUpdate
+	page.Title = "Update"
+	page.Form = postForm{
+		ID:    post.ID,
+		Title: post.Title,
+		Body:  post.Body,
+	}
 	if form := ctx.Get(context.FormKey); form != nil {
 		page.Form = form.(*postForm)
 	}
@@ -56,6 +83,36 @@ func (c *post ) Post(ctx echo.Context) error {
 	}
 	user := ctx.Get("auth_user").(*ent.User)
 	_, err := c.Container.ORM.Post.Create().
+		SetTitle(strings.TrimSpace(form.Title)).
+		SetBody(strings.TrimSpace(form.Body)).
+		SetAuthor(user.Email).
+		Save(ctx.Request().Context())
+	if err != nil {
+		return c.Fail(err, "unable to save post")
+	}
+
+	return c.Redirect(ctx, routeNameHome)
+}
+
+func (c *post ) Update(ctx echo.Context) error {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		return c.Fail(err, "unable to update post")
+	}
+
+	var form postForm
+	ctx.Set(context.FormKey, &form)
+	if err := ctx.Bind(&form); err != nil {
+		return c.Fail(err, "unable to parse post form")
+	}
+	if err := form.Submission.Process(ctx, form); err != nil {
+		return c.Fail(err, "unable to process form submission")
+	}
+	if form.Submission.HasErrors() {
+		return c.Get(ctx)
+	}
+	user := ctx.Get("auth_user").(*ent.User)
+	_, err = c.Container.ORM.Post.UpdateOneID(id).
 		SetTitle(strings.TrimSpace(form.Title)).
 		SetBody(strings.TrimSpace(form.Body)).
 		SetAuthor(user.Email).

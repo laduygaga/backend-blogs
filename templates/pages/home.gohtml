@@ -47,12 +47,13 @@
                             {{.Body}}
                         </p>
                     </div>
-                    <button class="btn btn-info btn-info"
-                        hx-put="/post/edit"
-                        hx-target="#posts"
-                        hx-swap="innerHTML">
-                        &#x270E;
-                    </button>
+                    <!-- Updated edit button with link to post page -->
+					<!-- link to post route then fill the form with the post data -->
+					<button class="btn btn-primary"
+						hx-get="/post/edit/{{.ID}}"
+						hx-swap="outerHTML"
+						>
+						&#x270E;
                     <button class="btn btn-error"
                         hx-delete="/post/delete/{{.ID}}"
                         hx-target="#posts"
