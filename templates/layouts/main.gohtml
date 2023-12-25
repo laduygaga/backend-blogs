@@ -14,6 +14,10 @@
                 <div id="navbarMenu" class="navbar-menu">
                     <div class="navbar-end">
                         {{template "search" .}}
+                        <h1 class="navbar-items is-vertical">
+                            <p> {{if .IsAuth}} {{.AuthUser.Name}}{{end}} </p>
+                            <p> {{if .IsAuth}} {{.AuthUser.Permission}}{{end}} </p>
+                        </h1>
                     </div>
                 </div>
             </div>
@@ -26,22 +30,26 @@
                         <p class="menu-label">General</p>
                         <ul class="menu-list">
                             <li>{{link (call .ToURL "home") "Dashboard" .Path}}</li>
-                            <!-- <li>{{link (call .ToURL "about") "About" .Path}}</li> -->
-                            <!-- <li>{{link (call .ToURL "contact") "Contact" .Path}}</li> -->
+                            {{/*
+                            <li>{{link (call .ToURL "about") "About" .Path}}</li>
+                            <li>{{link (call .ToURL "contact") "Contact" .Path}}</li>
+                            */}}
                         </ul>
 
                         <p class="menu-label">Account</p>
                         <ul class="menu-list">
                             {{- if .IsAuth}}
                                 <li>{{link (call .ToURL "post") "Post" .Path}}</li>
+                                <li>{{link (call .ToURL "user") "User" .Path}}</li>
                                 <li>{{link (call .ToURL "logout") "Logout" .Path}}</li>
                             {{- else}}
-                                <!-- <li>{{link (call .ToURL "login") "Login" .Path}}</li> -->
-                                <!-- <li>{{link (call .ToURL "login_with_google") "Login" .Path}}</li> -->
-								<!-- why the fuck, above pass url with http not https, then cors error -->
-								<li><a href="https://localhost:9090/user/login_with_google">Login</a></li>
-                                <!-- <li>{{link (call .ToURL "register") "Register" .Path}}</li> -->
-                                <!-- <li>{{link (call .ToURL "forgot_password") "Forgot password" .Path}}</li> -->
+                                {{/*
+                                <li>{{link (call .ToURL "login") "Login" .Path}}</li>
+                                <li>{{link (call .ToURL "login_with_google") "Login" .Path}}</li>
+                                <li>{{link (call .ToURL "register") "Register" .Path}}</li>
+                                <li>{{link (call .ToURL "forgot_password") "Forgot password" .Path}}</li>
+                                */}}
+                                <li><a href="https://localhost:9090/user/login_with_google">Login</a></li>
                             {{- end}}
                         </ul>
                     </aside>

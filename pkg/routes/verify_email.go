@@ -46,7 +46,7 @@ func (c *verifyEmail) Get(ctx echo.Context) error {
 	}
 
 	// Verify the user, if needed
-	if !usr.Verified {
+	if !usr.Verified{
 		usr, err = usr.
 			Update().
 			SetVerified(true).

@@ -38,6 +38,9 @@ const (
 	routeNamePostUpdate           = "post.update"
 	routeNamePostDelete           = "post.delete"
 	routeNamePostUpload           = "post.upload"
+	routeNameUser                 = "user"
+	routeNameUserUpdate           = "user.update"
+	routeNameUserDelete           = "user.delete"
 )
 
 // BuildRouter builds the router
@@ -104,8 +107,6 @@ func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) 
 	home := home{Controller: ctr}
 	g.Static("/static", config.StaticDir)
 	g.GET("/", home.Get).Name = routeNameHome
-	g.DELETE("/", home.Get).Name = routeNameHome
-	g.POST("/", home.Get).Name = routeNameHome
 
 	search := search{Controller: ctr}
 	g.GET("/search", search.Get).Name = routeNameSearch
@@ -127,10 +128,15 @@ func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 
 	noAuth := g.Group("/user", middleware.RequireNoAuthentication())
 	login := login{Controller: ctr}
+	noAuth.GET("/login_with_google", login.LoginWithGoogle).Name = routeNameLoginWithGoogle
 	g.GET("/api/v1/google/callback", login.GetCallback).Name = routeNameLoginGoogleCallback
 	noAuth.GET("/login", login.Get).Name = routeNameLogin
-	noAuth.GET("/login_with_google", login.LoginWithGoogle).Name = routeNameLoginWithGoogle
 	noAuth.POST("/login", login.Post).Name = routeNameLoginSubmit
+
+	Auth := g.Group("/users", middleware.RequireAuthentication())
+	user := _user_{Controller: ctr}
+	Auth.GET("", user.Get).Name = routeNameUser
+	Auth.PUT("/update/:id", user.Put).Name = routeNameUserUpdate
 
 	register := register{Controller: ctr}
 	noAuth.GET("/register", register.Get).Name = routeNameRegister

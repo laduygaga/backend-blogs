@@ -1,0 +1,68 @@
+{{define "content"}}
+    {{template "messages" .}}
+    {{- if not (eq .HTMX.Request.Target "users")}}
+        {{template "top-content" .}}
+    {{- end}}
+    {{template "users" .}}
+{{end}}
+
+
+{{define "users"}}
+    <div id="users">
+        {{- range .Data}}
+            <article class="media">
+                <figure class="media-left">
+                    <p class="image is-64x64">
+                        <img src="{{file "gopher.png"}}" alt="Gopher"/>
+                    </p>
+                </figure>
+                <div class="media-content">
+                    <div class="content">
+                        <p>
+                            <strong>{{.Name}}</strong>
+                            <br>
+                            {{.Email}}
+                        </p>
+                    </div>
+                </div>
+                {{- if and (.IsEditor) (not .IsLoggedIn)}}
+                <div class="field">
+                    <div class="control">
+                        <div class="select">
+                            <select
+                                hx-put="/users/update/{{.ID}}?page={{$.Pager.Page}}"
+                                hx-trigger="change"
+                                hx-swap="innerHTML"
+                                hx-target="#users"
+                                name="permission"
+                            >
+                                <option value="Viewer"{{if eq .Permission "Viewer"}} selected{{end}}>Viewer</option>
+                                <option value="Editor"{{if eq .Permission "Editor"}} selected{{end}}>Editor</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </article>
+        {{- end}}
+
+        <div class="field is-grouped is-grouped-centered">
+            {{- if not $.Pager.IsBeginning}}
+                <p class="control">
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/users?page={{sub $.Pager.Page 1}}" hx-target="#users">Previous page</button>
+                </p>
+            {{- end}}
+            {{- if not $.Pager.IsEnd}}
+                <p class="control">
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/users?page={{add $.Pager.Page 1}}" hx-target="#users">Next page</button>
+                </p>
+            {{- end}}
+        </div>
+    </div>
+{{end}}
+
+{{define "top-content"}}
+    <section class="section">
+        <h1 class="title">Current Users</h1>
+    </section>
+{{end}}

@@ -47,9 +47,11 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
-		{Name: "permission", Type: field.TypeString, Default: "R"},
+		{Name: "permission", Type: field.TypeString, Default: "Viewer"},
 		{Name: "password", Type: field.TypeString},
-		{Name: "verified", Type: field.TypeBool, Default: false},
+		{Name: "verified", Type: field.TypeBool, Default: true},
+		{Name: "is_editor", Type: field.TypeBool, Default: false},
+		{Name: "is_logged_in", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
 	}
 	// UsersTable holds the schema information for the "users" table.

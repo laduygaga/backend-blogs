@@ -5,9 +5,11 @@
 
     {{template "posts" .}}
 
-    <!-- {{- if not (eq .HTMX.Request.Target "posts")}} -->
-    <!--     {{template "file-msg" .}} -->
-    <!-- {{- end}} -->
+	{{/*
+    {{- if not (eq .HTMX.Request.Target "posts")}}
+        {{template "file-msg" .}}
+    {{- end}}
+	*/}}
 {{end}}
 
 {{define "top-content"}}
@@ -24,9 +26,6 @@
 
     <section class="section">
         <h1 class="title">Recent posts</h1>
-        <!-- <h2 class="subtitle"> -->
-        <!--     Below is list of recent post -->
-        <!-- </h2> -->
     </section>
 {{end}}
 
@@ -47,15 +46,13 @@
                             {{.Body}}
                         </p>
                     </div>
-                    <!-- Updated edit button with link to post page -->
-					<!-- link to post route then fill the form with the post data -->
 					<button class="btn btn-primary"
-						hx-get="/post/edit/{{.ID}}"
+						hx-get="/post/edit/{{.ID}}?page={{$.Pager.Page}}"
 						hx-swap="outerHTML"
 						>
 						&#x270E;
                     <button class="btn btn-error"
-                        hx-delete="/post/delete/{{.ID}}"
+                        hx-delete="/post/delete/{{.ID}}?page={{$.Pager.Page}}"
                         hx-target="#posts"
                         hx-swap="innerHTML"
                         hx-confirm="Are you sure you wish to delete post {{.Title}}?"

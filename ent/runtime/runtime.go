@@ -65,8 +65,16 @@ func init() {
 	userDescVerified := userFields[4].Descriptor()
 	// user.DefaultVerified holds the default value on creation for the verified field.
 	user.DefaultVerified = userDescVerified.Default.(bool)
+	// userDescIsEditor is the schema descriptor for is_editor field.
+	userDescIsEditor := userFields[5].Descriptor()
+	// user.DefaultIsEditor holds the default value on creation for the is_editor field.
+	user.DefaultIsEditor = userDescIsEditor.Default.(bool)
+	// userDescIsLoggedIn is the schema descriptor for is_logged_in field.
+	userDescIsLoggedIn := userFields[6].Descriptor()
+	// user.DefaultIsLoggedIn holds the default value on creation for the is_logged_in field.
+	user.DefaultIsLoggedIn = userDescIsLoggedIn.Default.(bool)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[5].Descriptor()
+	userDescCreatedAt := userFields[7].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 }

@@ -26,6 +26,7 @@ type (
 		ID    int    `form:"id"`
 		Title string `form:"title" validate:"required"`
 		Body  string `form:"body" validate:"required"`
+		Page  int    `form:"page"`
 		Submission controller.FormSubmission
 	}
 )
@@ -61,6 +62,7 @@ func (c *post ) GetUpdate(ctx echo.Context) error {
 		ID:    post.ID,
 		Title: post.Title,
 		Body:  post.Body,
+		Page:  page.Pager.Page,
 	}
 	if form := ctx.Get(context.FormKey); form != nil {
 		page.Form = form.(*postForm)
@@ -121,7 +123,7 @@ func (c *post ) Update(ctx echo.Context) error {
 		return c.Fail(err, "unable to save post")
 	}
 
-	return c.Redirect(ctx, routeNameHome)
+	return routeToPostPage(c.Controller, ctx, form.Page)
 }
 
 func (c *post ) Delete(ctx echo.Context) error {
@@ -130,12 +132,16 @@ func (c *post ) Delete(ctx echo.Context) error {
 	if id == 0 {
 		return c.Fail(nil, "unable to delete post")
 	}
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		return c.Fail(err, "invalid page number")
+	}
 	if err := c.Container.ORM.Post.DeleteOneID(id).Exec(ctx.Request().Context()); err != nil {
 		return c.Fail(err, "unable to delete post")
 	}
 
 	// msg.Info(ctx, fmt.Sprintf("Post %d deleted", id))
-	return c.Redirect(ctx, routeNameHome)
+	return routeToPostPage(c.Controller, ctx, page)
 }
 
 func getPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager) (int, []*ent.Post) {

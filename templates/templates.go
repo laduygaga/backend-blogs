@@ -25,6 +25,7 @@ const (
 	PageError          Page = "error"
 	PageForgotPassword Page = "forgot-password"
 	PageHome           Page = "home"
+	PageUser           Page = "user"
 	PagePost           Page = "post"
 	PagePostUpdate     Page = "post-update"
 	PageLogin          Page = "login"

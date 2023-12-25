@@ -148,8 +148,11 @@ func (c *login) GetCallback(ctx echo.Context) error {
 	if err != nil {
 		return err
 	}
+	// if !strings.HasSuffix(userInfo.Email, "@appota.com") {
+	// 	msg.Danger(ctx, "You must use Appota email to login")
+	// 	return c.Redirect(ctx, routeNameHome)
+	// }
 
-	// get user by email
 	u, err := c.Container.ORM.User.
 		Query().
 		Where(user.Email(strings.ToLower(userInfo.Email))).
@@ -164,6 +167,7 @@ func (c *login) GetCallback(ctx echo.Context) error {
 			SetName(userInfo.Name).
 			SetEmail(userInfo.Email).
 			SetPassword(password).
+			SetIsEditor(false).
 			SetVerified(true).
 			Save(ctx.Request().Context())
 		if err != nil {
