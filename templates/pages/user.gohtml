@@ -25,7 +25,7 @@
                         </p>
                     </div>
                 </div>
-                {{- if and (.IsEditor) (not .IsLoggedIn)}}
+                {{- if and (not (eq $.AuthUser nil)) (eq $.AuthUser.Permission "Editor") (not (eq .ID $.AuthUser.ID))}}
                 <div class="field">
                     <div class="control">
                         <div class="select">
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                {{end}}
+                {{- end}}
             </article>
         {{- end}}
 

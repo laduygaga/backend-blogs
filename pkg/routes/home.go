@@ -29,7 +29,6 @@ func (c *home) Get(ctx echo.Context) error {
 }
 
 func fetchPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager) []ent.Post {
-
 	total, p := getPosts(c, ctx, pager)
 	pager.SetItems(total)
 	if pager.Page < 1 {

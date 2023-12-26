@@ -67,34 +67,6 @@ func (uc *UserCreate) SetNillableVerified(b *bool) *UserCreate {
 	return uc
 }
 
-// SetIsEditor sets the "is_editor" field.
-func (uc *UserCreate) SetIsEditor(b bool) *UserCreate {
-	uc.mutation.SetIsEditor(b)
-	return uc
-}
-
-// SetNillableIsEditor sets the "is_editor" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsEditor(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsEditor(*b)
-	}
-	return uc
-}
-
-// SetIsLoggedIn sets the "is_logged_in" field.
-func (uc *UserCreate) SetIsLoggedIn(b bool) *UserCreate {
-	uc.mutation.SetIsLoggedIn(b)
-	return uc
-}
-
-// SetNillableIsLoggedIn sets the "is_logged_in" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsLoggedIn(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsLoggedIn(*b)
-	}
-	return uc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -169,14 +141,6 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultVerified
 		uc.mutation.SetVerified(v)
 	}
-	if _, ok := uc.mutation.IsEditor(); !ok {
-		v := user.DefaultIsEditor
-		uc.mutation.SetIsEditor(v)
-	}
-	if _, ok := uc.mutation.IsLoggedIn(); !ok {
-		v := user.DefaultIsLoggedIn
-		uc.mutation.SetIsLoggedIn(v)
-	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		if user.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized user.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -223,12 +187,6 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Verified(); !ok {
 		return &ValidationError{Name: "verified", err: errors.New(`ent: missing required field "User.verified"`)}
-	}
-	if _, ok := uc.mutation.IsEditor(); !ok {
-		return &ValidationError{Name: "is_editor", err: errors.New(`ent: missing required field "User.is_editor"`)}
-	}
-	if _, ok := uc.mutation.IsLoggedIn(); !ok {
-		return &ValidationError{Name: "is_logged_in", err: errors.New(`ent: missing required field "User.is_logged_in"`)}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
@@ -278,14 +236,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Verified(); ok {
 		_spec.SetField(user.FieldVerified, field.TypeBool, value)
 		_node.Verified = value
-	}
-	if value, ok := uc.mutation.IsEditor(); ok {
-		_spec.SetField(user.FieldIsEditor, field.TypeBool, value)
-		_node.IsEditor = value
-	}
-	if value, ok := uc.mutation.IsLoggedIn(); ok {
-		_spec.SetField(user.FieldIsLoggedIn, field.TypeBool, value)
-		_node.IsLoggedIn = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

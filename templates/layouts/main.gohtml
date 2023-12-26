@@ -39,8 +39,10 @@
                         <p class="menu-label">Account</p>
                         <ul class="menu-list">
                             {{- if .IsAuth}}
-                                <li>{{link (call .ToURL "post") "Post" .Path}}</li>
-                                <li>{{link (call .ToURL "user") "User" .Path}}</li>
+								{{- if eq .AuthUser.Permission "Editor"}}
+									<li>{{link (call .ToURL "post") "Post" .Path}}</li>
+									<li>{{link (call .ToURL "user") "User" .Path}}</li>
+								{{- end}}
                                 <li>{{link (call .ToURL "logout") "Logout" .Path}}</li>
                             {{- else}}
                                 {{/*

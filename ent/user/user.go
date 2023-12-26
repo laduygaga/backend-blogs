@@ -25,10 +25,6 @@ const (
 	FieldPassword = "password"
 	// FieldVerified holds the string denoting the verified field in the database.
 	FieldVerified = "verified"
-	// FieldIsEditor holds the string denoting the is_editor field in the database.
-	FieldIsEditor = "is_editor"
-	// FieldIsLoggedIn holds the string denoting the is_logged_in field in the database.
-	FieldIsLoggedIn = "is_logged_in"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
@@ -52,8 +48,6 @@ var Columns = []string{
 	FieldPermission,
 	FieldPassword,
 	FieldVerified,
-	FieldIsEditor,
-	FieldIsLoggedIn,
 	FieldCreatedAt,
 }
 
@@ -86,10 +80,6 @@ var (
 	PasswordValidator func(string) error
 	// DefaultVerified holds the default value on creation for the "verified" field.
 	DefaultVerified bool
-	// DefaultIsEditor holds the default value on creation for the "is_editor" field.
-	DefaultIsEditor bool
-	// DefaultIsLoggedIn holds the default value on creation for the "is_logged_in" field.
-	DefaultIsLoggedIn bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )
@@ -125,16 +115,6 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // ByVerified orders the results by the verified field.
 func ByVerified(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVerified, opts...).ToFunc()
-}
-
-// ByIsEditor orders the results by the is_editor field.
-func ByIsEditor(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsEditor, opts...).ToFunc()
-}
-
-// ByIsLoggedIn orders the results by the is_logged_in field.
-func ByIsLoggedIn(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsLoggedIn, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

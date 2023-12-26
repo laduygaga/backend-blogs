@@ -167,7 +167,6 @@ func (c *login) GetCallback(ctx echo.Context) error {
 			SetName(userInfo.Name).
 			SetEmail(userInfo.Email).
 			SetPassword(password).
-			SetIsEditor(false).
 			SetVerified(true).
 			Save(ctx.Request().Context())
 		if err != nil {

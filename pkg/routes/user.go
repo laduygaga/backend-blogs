@@ -5,9 +5,7 @@ import (
 
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/pkg/controller"
-	"github.com/mikestefanello/pagoda/pkg/msg"
 
-	// "github.com/mikestefanello/pagoda/pkg/msg"
 	"github.com/mikestefanello/pagoda/templates"
 
 	"github.com/labstack/echo/v4"
@@ -42,16 +40,9 @@ func (c *_user_) Put(ctx echo.Context) error {
 	if err := ctx.Bind(&req); err != nil {
 		return c.Fail(err, "unable to bind form")
 	}
-	loggedInUser := ctx.Get("auth_user").(*ent.User)
-	if !loggedInUser.IsEditor {
-		msg.Danger(ctx, "You do not have permission to change user permissions")
-		return c.Get(ctx)
-	}
-
 	_, err = c.Container.ORM.User.
 		UpdateOneID(id).
 		SetPermission(req.Permission).
-		SetIsEditor(req.Permission == "Editor").
 		Save(ctx.Request().Context())
 	if err != nil {
 		return c.Fail(err, "unable to save user")
@@ -83,8 +74,6 @@ func (c *_user_) fetchUsers(ctx echo.Context, pager *controller.Pager) []ent.Use
 			Name: v.Name,
 			Email:  v.Email,
 			Permission: v.Permission,
-			IsEditor: ctx.Get("auth_user").(*ent.User).IsEditor,
-			IsLoggedIn: ctx.Get("auth_user").(*ent.User).Email == v.Email,
 		}
 	}
 	return users

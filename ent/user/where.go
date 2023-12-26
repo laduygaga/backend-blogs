@@ -80,16 +80,6 @@ func Verified(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldVerified, v))
 }
 
-// IsEditor applies equality check predicate on the "is_editor" field. It's identical to IsEditorEQ.
-func IsEditor(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsEditor, v))
-}
-
-// IsLoggedIn applies equality check predicate on the "is_logged_in" field. It's identical to IsLoggedInEQ.
-func IsLoggedIn(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsLoggedIn, v))
-}
-
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -363,26 +353,6 @@ func VerifiedEQ(v bool) predicate.User {
 // VerifiedNEQ applies the NEQ predicate on the "verified" field.
 func VerifiedNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldVerified, v))
-}
-
-// IsEditorEQ applies the EQ predicate on the "is_editor" field.
-func IsEditorEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsEditor, v))
-}
-
-// IsEditorNEQ applies the NEQ predicate on the "is_editor" field.
-func IsEditorNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsEditor, v))
-}
-
-// IsLoggedInEQ applies the EQ predicate on the "is_logged_in" field.
-func IsLoggedInEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsLoggedIn, v))
-}
-
-// IsLoggedInNEQ applies the NEQ predicate on the "is_logged_in" field.
-func IsLoggedInNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsLoggedIn, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

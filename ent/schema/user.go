@@ -34,10 +34,6 @@ func (User) Fields() []ent.Field {
 			NotEmpty(),
 		field.Bool("verified").
 			Default(true),
-		field.Bool("is_editor").
-			Default(false),
-		field.Bool("is_logged_in").
-			Default(false),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable(),

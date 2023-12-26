@@ -98,34 +98,6 @@ func (uu *UserUpdate) SetNillableVerified(b *bool) *UserUpdate {
 	return uu
 }
 
-// SetIsEditor sets the "is_editor" field.
-func (uu *UserUpdate) SetIsEditor(b bool) *UserUpdate {
-	uu.mutation.SetIsEditor(b)
-	return uu
-}
-
-// SetNillableIsEditor sets the "is_editor" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsEditor(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsEditor(*b)
-	}
-	return uu
-}
-
-// SetIsLoggedIn sets the "is_logged_in" field.
-func (uu *UserUpdate) SetIsLoggedIn(b bool) *UserUpdate {
-	uu.mutation.SetIsLoggedIn(b)
-	return uu
-}
-
-// SetNillableIsLoggedIn sets the "is_logged_in" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsLoggedIn(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsLoggedIn(*b)
-	}
-	return uu
-}
-
 // AddOwnerIDs adds the "owner" edge to the PasswordToken entity by IDs.
 func (uu *UserUpdate) AddOwnerIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddOwnerIDs(ids...)
@@ -245,12 +217,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Verified(); ok {
 		_spec.SetField(user.FieldVerified, field.TypeBool, value)
-	}
-	if value, ok := uu.mutation.IsEditor(); ok {
-		_spec.SetField(user.FieldIsEditor, field.TypeBool, value)
-	}
-	if value, ok := uu.mutation.IsLoggedIn(); ok {
-		_spec.SetField(user.FieldIsLoggedIn, field.TypeBool, value)
 	}
 	if uu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -383,34 +349,6 @@ func (uuo *UserUpdateOne) SetVerified(b bool) *UserUpdateOne {
 func (uuo *UserUpdateOne) SetNillableVerified(b *bool) *UserUpdateOne {
 	if b != nil {
 		uuo.SetVerified(*b)
-	}
-	return uuo
-}
-
-// SetIsEditor sets the "is_editor" field.
-func (uuo *UserUpdateOne) SetIsEditor(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsEditor(b)
-	return uuo
-}
-
-// SetNillableIsEditor sets the "is_editor" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsEditor(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsEditor(*b)
-	}
-	return uuo
-}
-
-// SetIsLoggedIn sets the "is_logged_in" field.
-func (uuo *UserUpdateOne) SetIsLoggedIn(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsLoggedIn(b)
-	return uuo
-}
-
-// SetNillableIsLoggedIn sets the "is_logged_in" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsLoggedIn(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsLoggedIn(*b)
 	}
 	return uuo
 }
@@ -564,12 +502,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Verified(); ok {
 		_spec.SetField(user.FieldVerified, field.TypeBool, value)
-	}
-	if value, ok := uuo.mutation.IsEditor(); ok {
-		_spec.SetField(user.FieldIsEditor, field.TypeBool, value)
-	}
-	if value, ok := uuo.mutation.IsLoggedIn(); ok {
-		_spec.SetField(user.FieldIsLoggedIn, field.TypeBool, value)
 	}
 	if uuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

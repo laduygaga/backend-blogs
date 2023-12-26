@@ -923,8 +923,6 @@ type UserMutation struct {
 	permission    *string
 	password      *string
 	verified      *bool
-	is_editor     *bool
-	is_logged_in  *bool
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	owner         map[int]struct{}
@@ -1213,78 +1211,6 @@ func (m *UserMutation) ResetVerified() {
 	m.verified = nil
 }
 
-// SetIsEditor sets the "is_editor" field.
-func (m *UserMutation) SetIsEditor(b bool) {
-	m.is_editor = &b
-}
-
-// IsEditor returns the value of the "is_editor" field in the mutation.
-func (m *UserMutation) IsEditor() (r bool, exists bool) {
-	v := m.is_editor
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsEditor returns the old "is_editor" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsEditor(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsEditor is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsEditor requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsEditor: %w", err)
-	}
-	return oldValue.IsEditor, nil
-}
-
-// ResetIsEditor resets all changes to the "is_editor" field.
-func (m *UserMutation) ResetIsEditor() {
-	m.is_editor = nil
-}
-
-// SetIsLoggedIn sets the "is_logged_in" field.
-func (m *UserMutation) SetIsLoggedIn(b bool) {
-	m.is_logged_in = &b
-}
-
-// IsLoggedIn returns the value of the "is_logged_in" field in the mutation.
-func (m *UserMutation) IsLoggedIn() (r bool, exists bool) {
-	v := m.is_logged_in
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsLoggedIn returns the old "is_logged_in" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsLoggedIn(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsLoggedIn is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsLoggedIn requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsLoggedIn: %w", err)
-	}
-	return oldValue.IsLoggedIn, nil
-}
-
-// ResetIsLoggedIn resets all changes to the "is_logged_in" field.
-func (m *UserMutation) ResetIsLoggedIn() {
-	m.is_logged_in = nil
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (m *UserMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -1409,7 +1335,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 6)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -1424,12 +1350,6 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.verified != nil {
 		fields = append(fields, user.FieldVerified)
-	}
-	if m.is_editor != nil {
-		fields = append(fields, user.FieldIsEditor)
-	}
-	if m.is_logged_in != nil {
-		fields = append(fields, user.FieldIsLoggedIn)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -1452,10 +1372,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Password()
 	case user.FieldVerified:
 		return m.Verified()
-	case user.FieldIsEditor:
-		return m.IsEditor()
-	case user.FieldIsLoggedIn:
-		return m.IsLoggedIn()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -1477,10 +1393,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPassword(ctx)
 	case user.FieldVerified:
 		return m.OldVerified(ctx)
-	case user.FieldIsEditor:
-		return m.OldIsEditor(ctx)
-	case user.FieldIsLoggedIn:
-		return m.OldIsLoggedIn(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -1526,20 +1438,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVerified(v)
-		return nil
-	case user.FieldIsEditor:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsEditor(v)
-		return nil
-	case user.FieldIsLoggedIn:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsLoggedIn(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1611,12 +1509,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldVerified:
 		m.ResetVerified()
-		return nil
-	case user.FieldIsEditor:
-		m.ResetIsEditor()
-		return nil
-	case user.FieldIsLoggedIn:
-		m.ResetIsLoggedIn()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
