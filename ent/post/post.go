@@ -3,6 +3,8 @@
 package post
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -17,6 +19,10 @@ const (
 	FieldBody = "body"
 	// FieldAuthor holds the string denoting the author field in the database.
 	FieldAuthor = "author"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// Table holds the table name of the post in the database.
 	Table = "posts"
 )
@@ -27,6 +33,8 @@ var Columns = []string{
 	FieldTitle,
 	FieldBody,
 	FieldAuthor,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -46,6 +54,12 @@ var (
 	BodyValidator func(string) error
 	// AuthorValidator is a validator for the "author" field. It is called by the builders before save.
 	AuthorValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )
 
 // OrderOption defines the ordering options for the Post queries.
@@ -69,4 +83,14 @@ func ByBody(opts ...sql.OrderTermOption) OrderOption {
 // ByAuthor orders the results by the author field.
 func ByAuthor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthor, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }

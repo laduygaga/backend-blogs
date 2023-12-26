@@ -156,9 +156,12 @@ func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 }
 
 func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
+	noAuth := g.Group("/api/v1", middleware.RequireNoAuthentication())
+
+	post := post{Controller: ctr}
+	noAuth.GET("/posts", post.GetPosts)
 
 	Auth := g.Group("/post", middleware.RequireAuthentication())
-	post := post{Controller: ctr}
 	Auth.GET("/create", post.Get).Name = routeNamePost
 	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
 	Auth.GET("/edit/:id", post.GetUpdate).Name = routeNamePostSubmit

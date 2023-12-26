@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/mikestefanello/pagoda/ent"
 	"github.com/mikestefanello/pagoda/pkg/controller"
@@ -30,6 +31,20 @@ func (c *home) Get(ctx echo.Context) error {
 
 func fetchPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager) []ent.Post {
 	total, p := getPosts(c, ctx, pager)
+	from := ctx.QueryParam("from")
+	to := ctx.QueryParam("to")
+	if from != "" && to != "" {
+		fromDate, err := time.Parse("2006-01-02", from)
+		if err != nil {
+			return nil
+		}
+		toDate, err := time.Parse("2006-01-02", to)
+		if err != nil {
+			return nil
+		}
+		total, p = getPostsByDate(c, ctx, pager, fromDate, toDate)
+	}
+
 	pager.SetItems(total)
 	if pager.Page < 1 {
 		pager.Page = 1

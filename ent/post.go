@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -21,7 +22,11 @@ type Post struct {
 	// Body holds the value of the "body" field.
 	Body string `json:"body,omitempty"`
 	// Author holds the value of the "author" field.
-	Author       string `json:"author,omitempty"`
+	Author string `json:"author,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -34,6 +39,8 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case post.FieldTitle, post.FieldBody, post.FieldAuthor:
 			values[i] = new(sql.NullString)
+		case post.FieldCreatedAt, post.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -72,6 +79,18 @@ func (po *Post) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field author", values[i])
 			} else if value.Valid {
 				po.Author = value.String
+			}
+		case post.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				po.CreatedAt = value.Time
+			}
+		case post.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				po.UpdatedAt = value.Time
 			}
 		default:
 			po.selectValues.Set(columns[i], values[i])
@@ -117,6 +136,12 @@ func (po *Post) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("author=")
 	builder.WriteString(po.Author)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(po.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(po.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

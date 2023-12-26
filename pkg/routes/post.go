@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/mikestefanello/pagoda/ent"
 	post_ "github.com/mikestefanello/pagoda/ent/post"
@@ -196,4 +197,76 @@ func (c *post ) Upload(ctx echo.Context) error {
 		"fileName":  file.Filename,
 		"url":       "/static/uploads/" + file.Filename,
 	})
+}
+
+func (c *post ) GetPosts(ctx echo.Context) error {
+	from := ctx.QueryParam("from")
+	to := ctx.QueryParam("to")
+	if from != "" && to != "" {
+		return c.GetPostsByDate(ctx)
+	}
+	page := controller.NewPage(ctx)
+	page.Pager = controller.NewPager(ctx, 4)
+	total, posts := getPosts(c.Controller, ctx, &page.Pager)
+
+	page.Pager.SetItems(total)
+	if page.Pager.Page < 1 {
+		page.Pager.Page = 1
+	}
+	// return posts as json
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"posts": posts,
+		"pager": page.Pager,
+	})
+}
+
+func (c *post ) GetPostsByDate(ctx echo.Context) error {
+	from := ctx.QueryParam("from")
+	to := ctx.QueryParam("to")
+	page := controller.NewPage(ctx)
+	page.Pager = controller.NewPager(ctx, 4)
+	fromDate, err := time.Parse("2006-01-02", from)
+	if err != nil {
+		return c.Fail(err, "invalid from date")
+	}
+	toDate, err := time.Parse("2006-01-02", to)
+	if err != nil {
+		return c.Fail(err, "invalid to date")
+	}
+	total, posts := getPostsByDate(c.Controller, ctx, &page.Pager, fromDate, toDate)
+
+	page.Pager.SetItems(total)
+	if page.Pager.Page < 1 {
+		page.Pager.Page = 1
+	}
+	// return posts as json
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"posts": posts,
+		"pager": page.Pager,
+	})
+}
+
+func getPostsByDate(c controller.Controller, ctx echo.Context, pager *controller.Pager, from, to time.Time) (int, []*ent.Post) {
+	to = to.AddDate(0, 0, 1)
+	total, err := c.Container.ORM.Post.
+		Query().
+		Where(post_.CreatedAtGTE(from)).
+		Where(post_.CreatedAtLTE(to)).
+		Count(ctx.Request().Context())
+   if err != nil {
+		return 0, nil
+   }
+	posts, err := c.Container.ORM.Post.
+		Query().
+		Where(post_.CreatedAtGTE(from)).
+		Where(post_.CreatedAtLTE(to)).
+		Offset(pager.GetOffset()).
+		Limit(pager.ItemsPerPage).
+		Order(ent.Desc(post_.FieldID)).
+		All(ctx.Request().Context())
+	if err != nil {
+		return 0, nil
+	}
+
+	return total, posts
 }
