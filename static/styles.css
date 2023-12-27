@@ -4,3 +4,18 @@
 	overflow-y: auto; /* Enable vertical scrolling for the editable area */
 	overflow-x: auto; /* Enable vertical scrolling for the editable area */
 }
+.ck-content .text-tiny {
+    font-size: 0.7em;
+}
+
+.ck-content .text-small {
+    font-size: 0.85em;
+}
+
+.ck-content .text-big {
+    font-size: 1.4em;
+}
+
+.ck-content .text-huge {
+    font-size: 1.8em;
+}

@@ -30,6 +30,7 @@ const (
 	routeNameVerifyEmail          = "verify_email"
 	routeNameContact              = "contact"
 	routeNameContactSubmit        = "contact.submit"
+	routeNameContactDelete        = "contact.delete"
 	routeNameAbout                = "about"
 	routeNameHome                 = "home"
 	routeNameSearch               = "search"
@@ -117,6 +118,7 @@ func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) 
 	contact := contact{Controller: ctr}
 	g.GET("/contact", contact.Get).Name = routeNameContact
 	g.POST("/contact", contact.Post).Name = routeNameContactSubmit
+	g.DELETE("/contact/delete/:id", contact.Delete).Name = routeNameContactDelete
 }
 
 func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {

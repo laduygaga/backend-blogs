@@ -32,7 +32,6 @@
                             <li>{{link (call .ToURL "home") "Dashboard" .Path}}</li>
                             {{/*
                             <li>{{link (call .ToURL "about") "About" .Path}}</li>
-                            <li>{{link (call .ToURL "contact") "Contact" .Path}}</li>
                             */}}
                         </ul>
 
@@ -43,6 +42,7 @@
 									<li>{{link (call .ToURL "post") "Post" .Path}}</li>
 									<li>{{link (call .ToURL "user") "User" .Path}}</li>
 								{{- end}}
+								<li>{{link (call .ToURL "contact") "Contact" .Path}}</li>
                                 <li>{{link (call .ToURL "logout") "Logout" .Path}}</li>
                             {{- else}}
                                 {{/*

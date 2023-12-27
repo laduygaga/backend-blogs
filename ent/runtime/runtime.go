@@ -5,6 +5,7 @@ package runtime
 import (
 	"time"
 
+	"github.com/mikestefanello/pagoda/ent/contact"
 	"github.com/mikestefanello/pagoda/ent/passwordtoken"
 	"github.com/mikestefanello/pagoda/ent/post"
 	"github.com/mikestefanello/pagoda/ent/schema"
@@ -15,6 +16,28 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	contactFields := schema.Contact{}.Fields()
+	_ = contactFields
+	// contactDescEmail is the schema descriptor for email field.
+	contactDescEmail := contactFields[0].Descriptor()
+	// contact.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	contact.EmailValidator = contactDescEmail.Validators[0].(func(string) error)
+	// contactDescLink is the schema descriptor for link field.
+	contactDescLink := contactFields[1].Descriptor()
+	// contact.LinkValidator is a validator for the "link" field. It is called by the builders before save.
+	contact.LinkValidator = contactDescLink.Validators[0].(func(string) error)
+	// contactDescType is the schema descriptor for type field.
+	contactDescType := contactFields[2].Descriptor()
+	// contact.TypeValidator is a validator for the "type" field. It is called by the builders before save.
+	contact.TypeValidator = contactDescType.Validators[0].(func(string) error)
+	// contactDescMessage is the schema descriptor for message field.
+	contactDescMessage := contactFields[3].Descriptor()
+	// contact.MessageValidator is a validator for the "message" field. It is called by the builders before save.
+	contact.MessageValidator = contactDescMessage.Validators[0].(func(string) error)
+	// contactDescCreatedAt is the schema descriptor for created_at field.
+	contactDescCreatedAt := contactFields[4].Descriptor()
+	// contact.DefaultCreatedAt holds the default value on creation for the created_at field.
+	contact.DefaultCreatedAt = contactDescCreatedAt.Default.(func() time.Time)
 	passwordtokenFields := schema.PasswordToken{}.Fields()
 	_ = passwordtokenFields
 	// passwordtokenDescHash is the schema descriptor for hash field.
