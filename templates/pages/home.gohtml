@@ -50,6 +50,8 @@
                     <button class="btn btn-primary"
                         hx-get="/post/edit/{{.ID}}?page={{$.Pager.Page}}"
                         hx-swap="outerHTML"
+                        hx-delete="/post/delete/{{.ID}}?page={{$.Pager.Page}}"
+                        hx-target="#posts"
                         >
                         &#x270E;
                     <button class="btn btn-error"
