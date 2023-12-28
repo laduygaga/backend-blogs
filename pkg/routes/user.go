@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/mikestefanello/pagoda/ent"
@@ -29,6 +30,9 @@ func (c *_user_) Get(ctx echo.Context) error {
 }
 
 func (c *_user_) Put(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
 	id, err := strconv.Atoi(ctx.Param("id"))
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
 	if err != nil {

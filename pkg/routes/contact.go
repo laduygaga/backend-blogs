@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -57,6 +58,9 @@ func fetchContacts(c controller.Controller, ctx echo.Context, pager *controller.
 }
 
 func (c *contact) Delete(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		return c.Fail(err, "unable to delete contact")
@@ -105,6 +109,9 @@ func getContacts(c controller.Controller, ctx echo.Context, pager *controller.Pa
 }
 
 func (c *contact) Post(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
 	var form contactForm
 	ctx.Set(context.FormKey, &form)
 

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -73,6 +74,9 @@ func (c *post ) GetUpdate(ctx echo.Context) error {
 }
 
 func (c *post ) Post(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
 	var form postForm
 	ctx.Set(context.FormKey, &form)
 	if err := ctx.Bind(&form); err != nil {
@@ -98,6 +102,10 @@ func (c *post ) Post(ctx echo.Context) error {
 }
 
 func (c *post ) Update(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
+
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		return c.Fail(err, "unable to update post")
@@ -128,6 +136,9 @@ func (c *post ) Update(ctx echo.Context) error {
 }
 
 func (c *post ) Delete(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
 
 	id, _ := strconv.Atoi(ctx.Param("id"))
 	if id == 0 {
@@ -167,6 +178,10 @@ func getPosts(c controller.Controller, ctx echo.Context, pager *controller.Pager
 
 // upload file to static/uploads
 func (c *post ) Upload(ctx echo.Context) error {
+	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
+		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
+	}
+
 	file, err := ctx.FormFile("upload")
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"Status": err.Error()})
