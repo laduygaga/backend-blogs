@@ -26,6 +26,7 @@
 
     <section class="section">
         <h1 class="title">Recent posts</h1>
+		<input type="text" name="daterange" value="01/01/2018 - 01/15/2018"/>
     </section>
 {{end}}
 
@@ -48,14 +49,13 @@
                     </div>
                     {{- if and (not (eq $.AuthUser nil)) (eq $.AuthUser.Permission "Editor") }}
                     <button class="btn btn-primary"
-                        hx-get="/post/edit/{{.ID}}?page={{$.Pager.Page}}"
+                        hx-get="/admin/post/edit/{{.ID}}?page={{$.Pager.Page}}"
                         hx-swap="outerHTML"
-                        hx-delete="/post/delete/{{.ID}}?page={{$.Pager.Page}}"
                         hx-target="#posts"
                         >
                         &#x270E;
                     <button class="btn btn-error"
-                        hx-delete="/post/delete/{{.ID}}?page={{$.Pager.Page}}"
+                        hx-delete="/admin/post/delete/{{.ID}}?page={{$.Pager.Page}}"
                         hx-target="#posts"
                         hx-swap="innerHTML"
                         hx-confirm="Are you sure you want to delete this post? {{.Title}}"
@@ -70,16 +70,27 @@
         <div class="field is-grouped is-grouped-centered">
             {{- if not $.Pager.IsBeginning}}
                 <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/?page={{sub $.Pager.Page 1}}" hx-target="#posts">Previous page</button>
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/admin/?page={{sub $.Pager.Page 1}}" hx-target="#posts">Previous page</button>
                 </p>
             {{- end}}
             {{- if not $.Pager.IsEnd}}
                 <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/?page={{add $.Pager.Page 1}}" hx-target="#posts">Next page</button>
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/admin/?page={{add $.Pager.Page 1}}" hx-target="#posts">Next page</button>
                 </p>
             {{- end}}
         </div>
-    </div>
+	</div>
+
+	<script>
+		$(function() {
+		  $('input[name="daterange"]').daterangepicker({
+			opens: 'right'
+		  }, function(start, end, label) {
+			console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+		  });
+		});
+	</script>
+
 {{end}}
 
 {{define "file-msg"}}

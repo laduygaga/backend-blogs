@@ -106,8 +106,8 @@ func BuildRouter(c *services.Container) {
 
 func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
 	home := home{Controller: ctr}
-	g.Static("/static", config.StaticDir)
-	g.GET("/", home.Get).Name = routeNameHome
+	g.Static("/admin/static", config.StaticDir)
+	g.GET("/admin", home.Get).Name = routeNameHome
 
 	search := search{Controller: ctr}
 	g.GET("/search", search.Get).Name = routeNameSearch
@@ -116,9 +116,10 @@ func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) 
 	g.GET("/about", about.Get).Name = routeNameAbout
 
 	contact := contact{Controller: ctr}
-	g.GET("/contact", contact.Get).Name = routeNameContact
-	g.POST("/contact", contact.Post).Name = routeNameContactSubmit
-	g.DELETE("/contact/delete/:id", contact.Delete).Name = routeNameContactDelete
+	Auth := g.Group("/admin", middleware.RequireAuthentication())
+	Auth.GET("/contact", contact.Get).Name = routeNameContact
+	Auth.POST("/contact", contact.Post).Name = routeNameContactSubmit
+	Auth.DELETE("/contact/delete/:id", contact.Delete).Name = routeNameContactDelete
 }
 
 func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
@@ -128,14 +129,14 @@ func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 	verifyEmail := verifyEmail{Controller: ctr}
 	g.GET("/email/verify/:token", verifyEmail.Get).Name = routeNameVerifyEmail
 
-	noAuth := g.Group("/user", middleware.RequireNoAuthentication())
+	noAuth := g.Group("/admin/user", middleware.RequireNoAuthentication())
 	login := login{Controller: ctr}
 	noAuth.GET("/login_with_google", login.LoginWithGoogle).Name = routeNameLoginWithGoogle
 	g.GET("/api/v1/google/callback", login.GetCallback).Name = routeNameLoginGoogleCallback
 	noAuth.GET("/login", login.Get).Name = routeNameLogin
 	noAuth.POST("/login", login.Post).Name = routeNameLoginSubmit
 
-	Auth := g.Group("/users", middleware.RequireAuthentication())
+	Auth := g.Group("/admin/users", middleware.RequireAuthentication())
 	user := _user_{Controller: ctr}
 	Auth.GET("", user.Get).Name = routeNameUser
 	Auth.PUT("/update/:id", user.Put).Name = routeNameUserUpdate
@@ -163,7 +164,7 @@ func postRoutes(c *services.Container, g *echo.Group, ctr controller.Controller)
 	post := post{Controller: ctr}
 	noAuth.GET("/posts", post.GetPosts)
 
-	Auth := g.Group("/post", middleware.RequireAuthentication())
+	Auth := g.Group("/admin/post", middleware.RequireAuthentication())
 	Auth.GET("/create", post.Get).Name = routeNamePost
 	Auth.POST("/create", post.Post).Name = routeNamePostSubmit
 	Auth.GET("/edit/:id", post.GetUpdate).Name = routeNamePostSubmit

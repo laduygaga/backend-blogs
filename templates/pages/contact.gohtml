@@ -27,7 +27,7 @@
 						{{- if and (not (eq $.AuthUser nil)) (eq $.AuthUser.Permission "Editor") }}
 						<td>
 							<button class="btn btn-error"
-								hx-delete="/contact/delete/{{.ID}}?page={{$.Pager.Page}}"
+								hx-delete="/admin/contact/delete/{{.ID}}?page={{$.Pager.Page}}"
 								hx-target="#contacts"
 								hx-swap="innerHTML"
 								hx-confirm="Are you sure you want to delete this contact? {{.Email}}"
@@ -44,12 +44,12 @@
         <div class="field is-grouped is-grouped-centered">
             {{- if not $.Pager.IsBeginning}}
                 <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/contact?page={{sub $.Pager.Page 1}}" hx-target="#contacts">Previous page</button>
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/admin/contact?page={{sub $.Pager.Page 1}}" hx-target="#contacts">Previous page</button>
                 </p>
             {{- end}}
             {{- if not $.Pager.IsEnd}}
                 <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/contact?page={{add $.Pager.Page 1}}" hx-target="#contacts">Next page</button>
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/admin/contact?page={{add $.Pager.Page 1}}" hx-target="#contacts">Next page</button>
                 </p>
             {{- end}}
         </div>

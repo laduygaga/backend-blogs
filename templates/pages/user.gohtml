@@ -30,7 +30,7 @@
                     <div class="control">
                         <div class="select">
                             <select
-                                hx-put="/users/update/{{.ID}}?page={{$.Pager.Page}}"
+                                hx-put="/admin/users/update/{{.ID}}?page={{$.Pager.Page}}"
                                 hx-trigger="change"
                                 hx-swap="innerHTML"
                                 hx-target="#users"
@@ -49,12 +49,12 @@
         <div class="field is-grouped is-grouped-centered">
             {{- if not $.Pager.IsBeginning}}
                 <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/users?page={{sub $.Pager.Page 1}}" hx-target="#users">Previous page</button>
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/admin/users?page={{sub $.Pager.Page 1}}" hx-target="#users">Previous page</button>
                 </p>
             {{- end}}
             {{- if not $.Pager.IsEnd}}
                 <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/users?page={{add $.Pager.Page 1}}" hx-target="#users">Next page</button>
+                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/admin/users?page={{add $.Pager.Page 1}}" hx-target="#users">Next page</button>
                 </p>
             {{- end}}
         </div>

@@ -210,7 +210,7 @@ func (c *post ) Upload(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"uploaded":  1,
 		"fileName":  file.Filename,
-		"url":       "/static/uploads/" + file.Filename,
+		"url":       "/admin/static/uploads/" + file.Filename,
 	})
 }
 
