@@ -116,9 +116,9 @@ func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) 
 	g.GET("/about", about.Get).Name = routeNameAbout
 
 	contact := contact{Controller: ctr}
+	g.POST("/api/v1/contact", contact.Post).Name = routeNameContactSubmit
 	Auth := g.Group("/admin", middleware.RequireAuthentication())
 	Auth.GET("/contact", contact.Get).Name = routeNameContact
-	Auth.POST("/contact", contact.Post).Name = routeNameContactSubmit
 	Auth.DELETE("/contact/delete/:id", contact.Delete).Name = routeNameContactDelete
 }
 

@@ -109,9 +109,6 @@ func getContacts(c controller.Controller, ctx echo.Context, pager *controller.Pa
 }
 
 func (c *contact) Post(ctx echo.Context) error {
-	if ctx.Get("auth_user").(*ent.User).Permission != "Editor" {
-		return c.Fail(errors.New("Permission Error"), "do not have permission to delete contact")
-	}
 	var form contactForm
 	ctx.Set(context.FormKey, &form)
 
