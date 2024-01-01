@@ -3,16 +3,35 @@ version: "3"
 services:
   cache:
     image: "redis:alpine"
-    container_name: pagoda_cache
+    container_name: blog_admin_cache
     ports:
-      - "127.0.0.1:6379:6379"
+      - "6379:6379"
+    networks:
+      - ota-network
+
   db:
-    # PG 16 is currenly not supported https://github.com/ent/ent/issues/3750
     image: postgres:15-alpine
-    container_name: pagoda_db
+    container_name: blog_admin_db
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=app
+      - POSTGRES_DB=blog_admin
+    networks:
+      - ota-network
+
+  app:
+    build:
+      context: .
+    container_name: blog_admin_app
+    depends_on:
+      - cache
+      - db
+    networks:
+      - ota-network
+    ports:
+      - "9090:9090"
+
+networks:
+  ota-network:

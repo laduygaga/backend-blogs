@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-blog-postgres
+  namespace: ota-network
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-blog-postgres
+  template:
+    metadata:
+      labels:
+        app: admin-blog-postgres
+    spec:
+      containers:
+      - name: admin-blog-postgres
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_PASSWORD
+          value: admin
+        - name: POSTGRES_DB
+          value: blog_admin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-blog-postgres-service
+  namespace: ota-network
+spec:
+  selector:
+    app: admin-blog-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

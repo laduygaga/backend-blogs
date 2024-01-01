@@ -2,10 +2,9 @@ package config
 
 import (
 	"os"
-	"strings"
 	"time"
 
-	"github.com/spf13/viper"
+	"github.com/JeremyLoy/config"
 )
 
 const (
@@ -50,107 +49,95 @@ func SwitchEnvironment(env environment) {
 	}
 }
 
-type (
-	// Config stores complete configuration
-	Config struct {
-		HTTP     HTTPConfig
-		App      AppConfig
-		Cache    CacheConfig
-		Database DatabaseConfig
-		Mail     MailConfig
-		Google   GoogleConfig
-	}
+type Config struct {
+	configFile string
 
 	// HTTPConfig stores HTTP configuration
-	HTTPConfig struct {
-		Hostname     string
-		Port         uint16
-		ReadTimeout  time.Duration
-		WriteTimeout time.Duration
-		IdleTimeout  time.Duration
+	HTTP struct {
+		Hostname     string `config:"HOSTNAME"`
+		Port         uint16 `config:"PORT"`
+		ReadTimeout  time.Duration `config:"READ_TIMEOUT"`
+		WriteTimeout time.Duration `config:"WRITE_TIMEOUT"`
+		IdleTimeout  time.Duration `config:"IDLE_TIMEOUT"`
 		TLS          struct {
-			Enabled     bool
-			Certificate string
-			Key         string
-		}
+			Enabled     bool `config:"ENABLED"`
+			Certificate string `config:"CERTIFICATE"`
+			Key         string `config:"KEY"`
+		} `config:"TLS"`
 	}
 
 	// AppConfig stores application configuration
-	AppConfig struct {
-		Name          string
-		Environment   environment
-		EncryptionKey string
-		Timeout       time.Duration
+	App struct {
+		Name          string `config:"NAME"`
+		Environment   environment `config:"ENVIRONMENT"`
+		EncryptionKey string `config:"ENCRYPTION_KEY"`
+		Timeout       time.Duration `config:"TIMEOUT"`
 		PasswordToken struct {
-			Expiration time.Duration
-			Length     int
-		}
-		EmailVerificationTokenExpiration time.Duration
+			Expiration time.Duration `config:"EXPIRATION"`
+			Length     int `config:"LENGTH"`
+		} `config:"PASSWORD_TOKEN"`
+		EmailVerificationTokenExpiration time.Duration `config:"EMAIL_VERIFICATION_TOKEN_EXPIRATION"`
 	}
 
 	// CacheConfig stores the cache configuration
-	CacheConfig struct {
-		Hostname     string
-		Port         uint16
-		Password     string
-		Database     int
-		TestDatabase int
+	Cache struct {
+		Hostname     string `config:"HOSTNAME"`
+		Port         uint16 `config:"PORT"`
+		Password     string `config:"PASSWORD"`
+		Database     int `config:"DATABASE"`
+		TestDatabase int `config:"TEST_DATABASE"`
 		Expiration   struct {
-			StaticFile time.Duration
-			Page       time.Duration
-		}
+			StaticFile time.Duration `config:"STATIC_FILE"`
+			Page       time.Duration `config:"PAGE"`
+		} `config:"EXPIRATION"`
 	}
 
 	// DatabaseConfig stores the database configuration
-	DatabaseConfig struct {
-		Hostname     string
-		Port         uint16
-		User         string
-		Password     string
-		Database     string
-		TestDatabase string
+	Database struct {
+		Hostname     string `config:"HOSTNAME"`
+		Port         uint16 `config:"PORT"`
+		User         string `config:"USER"`
+		Password     string `config:"PASSWORD"`
+		Database     string `config:"DATABASE"`
+		TestDatabase string `config:"TEST_DATABASE"`
 	}
 
 	// MailConfig stores the mail configuration
-	MailConfig struct {
-		Hostname    string
-		Port        uint16
-		User        string
-		Password    string
-		FromAddress string
+	Mail struct {
+		Hostname    string `config:"HOSTNAME"`
+		Port        uint16 `config:"PORT"`
+		User        string `config:"USER"`
+		Password    string `config:"PASSWORD"`
+		FromAddress string `config:"FROM_ADDRESS"`
 	}
 
-	GoogleConfig struct {
-		ClientID		string
-		ClientSecret    string
-		RedirectURL     string
+	Google struct {
+		ClientID		string `config:"CLIENT_ID"`
+		ClientSecret    string `config:"CLIENT_SECRET"`
+		RedirectURL     string `config:"REDIRECT_URL"`
 	}
-)
+}
+var conf = Config{
+}
 
 // GetConfig loads and returns configuration
 func GetConfig() (Config, error) {
-	var c Config
+	return conf, nil
+}
 
-	// Load the config file
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("config")
-	viper.AddConfigPath("../config")
-	viper.AddConfigPath("../../config")
-
-	// Load env variables
-	viper.SetEnvPrefix("pagoda")
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	if err := viper.ReadInConfig(); err != nil {
-		return c, err
+func init() {
+	configFile := ".env"
+	if f := os.Getenv("CONFIG_FILE"); f != "" {
+		configFile = f
 	}
-
-	if err := viper.Unmarshal(&c); err != nil {
-		return c, err
+	if _, err := os.Stat(configFile); !os.IsNotExist(err) {
+		conf.configFile = configFile
+		config.From(configFile).FromEnv().To(&conf)
+	} else {
+		config.FromEnv().To(&conf)
 	}
+}
 
-	return c, nil
+func (c Config) ConfigFile() string {
+	return c.configFile
 }

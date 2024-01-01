@@ -5,7 +5,7 @@ DCO_BIN := $(shell { command -v docker-compose || command -v docker compose; } 2
 # Connect to the primary database
 .PHONY: db
 db:
-	docker exec -it pagoda_db psql postgresql://admin:admin@localhost:5432/app
+	docker exec -it blog_admin_db psql postgresql://admin:admin@localhost:5432/blog_admin
 
 # Connect to the test database (you must run tests first before running this)
 .PHONY: db-test
@@ -15,7 +15,7 @@ db-test:
 # Connect to the primary cache
 .PHONY: cache
 cache:
-	docker exec -it pagoda_cache redis-cli
+	docker exec -it blog_admin_cache redis-cli
 
 # Clear the primary cache
 .PHONY: cache-clear

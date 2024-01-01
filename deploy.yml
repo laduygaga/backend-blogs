@@ -1,0 +1,87 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: ota-network
+  name: ota-admin-blog
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: ota-admin-blog
+  template:
+    metadata:
+      labels:
+        app: ota-admin-blog
+        type: app
+    spec:
+      imagePullSecrets:
+        - name: deploy-blog-admin
+      volumes:
+        - name: deploy-blog-admin
+          secret:
+            secretName: deploy-blog-admin
+      containers:
+        - name: ota-admin-blog
+          image: docker.appota.com/ota-network/ota-blog-admin/ota-blog-admin:<API_IMAGE_TAG>
+          ports:
+            - containerPort: 9090
+          env:
+            - name: CONFIG_FILE
+              value: /api.env
+          volumeMounts:
+            - name: deploy-blog-admin
+              mountPath: /api.env
+              subPath: .env.prod
+              readOnly: true
+          resources:
+            limits:
+              cpu: '2'
+              memory: 2048M
+            requests:
+              cpu: 500m
+              memory: 512M
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: ota-network
+  name: ota-admin-blog
+spec:
+  ports:
+    - port: 9090
+  selector:
+    app: ota-admin-blog
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  namespace: ota-network
+  name: ota-admin-blog
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+  labels:
+    app: ota-admin-blog
+spec:
+  rules:
+    - host: landing.ota.network
+      http:
+        paths:
+          - path: /admin
+            backend:
+              serviceName: ota-admin-blog
+              servicePort: 9090
+          - path: /api
+            backend:
+              serviceName: ota-admin-blog
+              servicePort: 9090
+
+  tls:
+    - secretName: ota-network-landing-page
+      hosts:
+        - landing.ota.network

@@ -195,6 +195,10 @@ func (c *post ) Upload(ctx echo.Context) error {
 	defer src.Close()
 
 	// Create a new file in the destination
+	// check if donot have folder static/uploads then create it
+	if _, err := os.Stat("./static/uploads"); os.IsNotExist(err) {
+		os.Mkdir("./static/uploads", 0755)
+	}
 	dst, err := os.Create("./static/uploads/" + file.Filename)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"Status": err.Error()})
